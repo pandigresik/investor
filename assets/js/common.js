@@ -4,6 +4,53 @@
  *
  */
 
+'use strict';
+var Config = {
+    decimal: {
+        prefix: '',
+        centsSeparator: ',',
+        centsLimit: 2,
+        thousandsSeparator: '.'
+    },
+    decimal3: {
+        prefix: '',
+        centsSeparator: ',',
+        centsLimit: 3,
+        thousandsSeparator: '.'
+    },
+    angka: {
+        prefix: '',
+        centsSeparator: '',
+        centsLimit: 0,
+        clearOnEmpty: true,
+        thousandsSeparator: ''
+    },
+    telpon: {
+        prefix: '0',
+        centsSeparator: '',
+        centsLimit: 0,
+        clearOnEmpty: false,
+        thousandsSeparator: '',
+        insertPlusSign: false,
+        allowNegative: false,
+    },
+    integer: {
+        prefix: '',
+        centsSeparator: ',',
+        centsLimit: 0,
+        thousandsSeparator: '.'
+    },
+    tahun: {
+        prefix: '',
+        centsSeparator: ',',
+        limit: 4,
+        centsLimit: 0,
+        clearOnEmpty: true,
+        thousandsSeparator: ''
+    },
+};
+
+
 function getMessage(message, msgRequest) {
     /**
      * @Usage:
@@ -138,6 +185,11 @@ function number_format(number, decimals, dec_point, thousands_sep) {
         s[1] += new Array(prec - s[1].length + 1).join('0');
     }
     return s.join(dec);
+}
+
+function angkaIndonesia(number, decimal) {
+    decimal = decimal == undefined ? 0 : decimal;
+    return number_format(number, decimal, ',', '.');
 }
 
 function parse_number(string_number, thousands_sep, decimal_sep) {
@@ -281,14 +333,204 @@ function messageBox(title, message) {
     */
 }
 
-function showImage(url) {
-    var w = screen.width - 300,
-        h = 500;
-    var left = (screen.width / 2) - (w / 2);
-    var top = (screen.height / 2) - (h / 2);
-    window.open(url, "_blank", "toolbar=no, scrollbars=yes, resizable=yes, top=" + top + ", left=" + left + ", width=" + w + ", height=" + h);
+function setNumberFormatOnLoadPage() {
+    $('[data-tipe=integer],[data-tipe=angka],[data-tipe=decimal],[data-tipe=decimal3]').each(function() {
+        $(this).priceFormat(Config[$(this).data('tipe')]);
+    });
+} // end - setNumberFormatOnLoadPage
+
+var s_loading = null;
+
+function showLoading(pesan = "Please wait . . . ") {
+    if (s_loading == null) {
+        s_loading = bootbox.dialog({
+            message: '<div class="text-center"><i class="fa fa-spin fa-spinner"></i> ' + pesan + '</div>',
+            closeButton: false,
+        });
+    }
 }
 
+function hideLoading() {
+    if (s_loading != null) {
+        s_loading.modal('hide');
+        s_loading = null;
+    }
+}
+
+function filter_content(elm) {
+    var _tr = $(elm).closest('tr');
+    var _tbody = _tr.closest('table').find('tbody');
+    var _content, _target;
+    _tbody.find('tr').show();
+    _tr.find('input,select').each(function() {
+        _content = $(this).val();
+        if (!empty(_content)) {
+            _target = $(this).data('target');
+            _tbody.find('td.' + _target + ':not(:contains(' + _content.toUpperCase() + '))').parent().hide();
+        }
+    });
+}
+
+function showNameFile(elm) {
+    var _label = $(elm).closest('label');
+    var _spanfile = _label.prev('span');
+    var _allowtypes = $(elm).data('allowtypes').split('|');
+    var _type = $(elm).get(0).files[0]['name'].split('.').pop();
+
+    if (in_array(_type, _allowtypes)) {
+        if (_spanfile.length) {
+            _spanfile.html($(elm).val());
+        } else {
+            $('<span>' + $(elm).val() + '</span>').insertBefore(_label);
+        }
+    } else {
+        $(elm).val('');
+        bootbox.alert('Format file tidak sesuai. Mohon attach ulang.');
+    }
+}
+
+var numeral = {
+    unformat: function(string_number) {
+        string_number = (empty(string_number)) ? 0 : string_number;
+        return parse_number(string_number, '.', ',');
+    },
+
+    format: function(string_number, dec = 2) {
+        string_number = (empty(string_number)) ? 0 : string_number;
+        return number_format(string_number, dec, ',', '.');
+    },
+
+    formatInt: function(string_number, dec = 2) {
+        string_number = (empty(string_number)) ? 0 : string_number;
+        return number_format(string_number, 0, ',', '.');
+    },
+
+    formatDec: function(string_number, dec = 2) {
+        string_number = (empty(string_number)) ? 0 : string_number;
+        return number_format(string_number, dec, ',', '.');
+    }
+};
+
+function getValueDateSQL(elm) {
+    var result = null;
+    try {
+        var _value = moment($(elm).datepicker("getDate"));
+        result = moment(_value).format('YYYY-MM-DD');
+    } catch (e) {
+        console.error(e);
+    }
+    return result;
+}
+
+function getValueTimeSQL(elm) {
+    var result = null;
+    try {
+        var _value = moment($(elm).data("DateTimePicker").date());
+        result = moment(_value).format('HH:mm:ss');
+    } catch (e) {
+        console.error(e);
+    }
+    return result;
+}
+
+function getValueDateTimeSQL(elm) {
+    var result = null;
+    try {
+        var _value = moment($(elm).data("DateTimePicker").date());
+        result = moment(_value).format('YYYY-MM-DD HH:mm:ss');
+    } catch (e) {
+        console.error(e);
+    }
+    return result;
+}
+
+$.fn.enterKey = function(fnc, mod) {
+    return this.each(function() {
+        $(this).keypress(function(ev) {
+            var keycode = (ev.keyCode ? ev.keyCode : ev.which);
+            if ((keycode == '13' || keycode == '10') && (!mod || ev[mod + 'Key'])) {
+                fnc.call(this, ev);
+            }
+        })
+    })
+}
+
+Number.prototype.round = function(decLength = 2) {
+    var num = Math.round(this + 'e' + decLength)
+    return Number(num + 'e-' + decLength)
+}
+
+function dateSQL(tanggal) {
+    return moment(tanggal).format('YYYY-MM-DD');
+}
+
+function dateTimeSQL(tanggal) {
+    return moment(tanggal).format('YYYY-MM-DD HH:mm:ss');
+}
+
+function timeSQL(time) {
+    return moment(time).format('HH:mm:ss');
+}
+
+function sleep(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+        if ((new Date().getTime() - start) > milliseconds) {
+            break;
+        }
+    }
+}
+
+/* fungsi untuk inisialisasi input format angka ketika klik baris baru*/
+function reinitiateNumber(elm) {
+    $(elm).each(function(i) {
+        console.log($(this).data('tipe'));
+        if ($(this).data('tipe') != undefined) {
+            $(this).priceFormat(Config[$(this).data('tipe')]);
+        }
+    })
+}
+
+function serializeArrayFull(elm) {
+    var data_params = [];
+    var data = {};
+    $(elm).find('input[type!=checkbox]').each(function(i, v) {
+        data = {
+            'name': $(v).attr('name'),
+            'value': ($(v).attr('data-tipe') == 'integer' || $(v).attr('data-tipe') == 'decimal') ? numeral.unformat($(v).val()) : $(v).val(),
+            'required': $(v).attr('required') ? true : false,
+            'label': $(v).attr('required') ? $(v).attr('label') : '',
+            'type': $(v).attr('type')
+        };
+        data_params.push(data);
+    });
+
+    $(elm).find('input[type=checkbox]').each(function(i, v) {
+        data = {
+            'name': $(v).attr('name'),
+            'value': $(v).is(':checked') ? 1 : 0,
+            'required': $(v).attr('required') ? true : false,
+            'label': $(v).attr('required') ? $(v).attr('label') : '',
+            'type': $(v).attr('type')
+        };
+        data_params.push(data);
+    });
+
+    $(elm).find('select').each(function(i, v) {
+        data = {
+            'name': $(v).attr('name'),
+            'value': $(v).find('option:selected').val(),
+            'required': $(v).attr('required') ? true : false,
+            'label': $(v).attr('required') ? $(v).attr('label') : '',
+            'type': $(v).attr('type')
+        };
+        data_params.push(data);
+    });
+
+    // data_params.find(v => v.name == 'status').value = 'tes';
+    // console.log(data_params);
+    return data_params;
+}
 File.prototype.convertToBase64 = function(callback) {
     var reader = new FileReader();
     reader.onload = function(e) {
@@ -298,4 +540,73 @@ File.prototype.convertToBase64 = function(callback) {
         callback(null);
     };
     reader.readAsDataURL(this);
+};
+
+function validationSave(data_params, confirm_msg, callback) {
+    var result = 1;
+    var count = 0;
+    var jenis_grade = '';
+
+    $.each(data_params, function(i, v) {
+        if (v.required == true && v.value == '') {
+            result = 0;
+        }
+    });
+    // return false;
+
+    if (result == 1) {
+        var message2 = confirm_msg;
+        var _options2 = {
+            title: 'Konfirmasi Simpan Data',
+            className: 'titleCenter',
+            message: message2,
+            buttons: {
+                cancel: {
+                    label: 'Tidak',
+                    callback: function() {}
+                },
+                confirm: {
+                    label: 'Ya',
+                    callback: function() {
+                        box2.bind('hidden.bs.modal', function() {
+                            callback(result);
+                        });
+                    }
+                },
+            },
+        };
+
+        var box2 = bootbox.dialog(_options2);
+    } else {
+        var _options = {
+            title: 'Penyimpanan data gagal',
+            className: 'titleCenter',
+            message: 'Isian data tidak lengkap',
+        };
+        var box = bootbox.dialog(_options);
+
+        box.bind('shown.bs.modal', function() {
+            $('div.bootbox .btn-checkmark').addClass('hide');
+        });
+    }
+};
+
+function executeSave(data_params, url, callback) {
+    // console.log(url);
+    $.ajax({
+        url: url,
+        data: data_params,
+        type: 'post',
+        dataType: 'json',
+        beforeSend: function() {
+            bootbox.dialog({
+                message: "Sedang proses simpan..."
+            });
+        },
+        success: function(data) {
+            $('.bootbox').modal('hide');
+            callback(data);
+        }
+    });
+
 };

@@ -1,5 +1,5 @@
 {
     "require": {
-        "romariorramos/simple-omrphp": "^1.0"
+        "faisalman/simple-excel-php": "^0.3.15"
     }
 }

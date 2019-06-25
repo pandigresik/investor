@@ -1,16 +1,19 @@
-<?php defined('BASEPATH') or exit('No direct script access allowed');
+<?php
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
- * CodeIgniter Rest Controller
+ * CodeIgniter Rest Controller.
  *
  * A fully RESTful server implementation for CodeIgniter using one library, one config file and one controller.
  *
- * @package        	CodeIgniter
- * @subpackage    	Libraries
  * @category    	Libraries
+ *
  * @author        	Phil Sturgeon, Chris Kacerguis
  * @license         MIT
- * @link			https://github.com/chriskacerguis/codeigniter-restserver
+ *
+ * @see			https://github.com/chriskacerguis/codeigniter-restserver
+ *
  * @version         3.0.0-pre
  */
 abstract class REST_Controller extends MX_Controller
@@ -22,17 +25,17 @@ abstract class REST_Controller extends MX_Controller
      *
      * @var string|null
      */
-    protected $rest_format          = null;
+    protected $rest_format = null;
 
     /**
-     * Defines the list of method properties such as limit, log and level
+     * Defines the list of method properties such as limit, log and level.
      *
      * @var array
      */
-    protected $methods              = array();
+    protected $methods = array();
 
     /**
-     * List of allowed HTTP methods
+     * List of allowed HTTP methods.
      *
      * @var array
      */
@@ -44,137 +47,137 @@ abstract class REST_Controller extends MX_Controller
      *
      * @var object
      */
-    protected $request              = null;
+    protected $request = null;
 
     /**
      * What is gonna happen in output?
      *
      * @var object
      */
-    protected $response             = null;
+    protected $response = null;
 
     /**
-     * Stores DB, keys, key level, etc
+     * Stores DB, keys, key level, etc.
      *
      * @var object
      */
-    protected $rest                 = null;
+    protected $rest = null;
 
     /**
-     * The arguments for the GET request method
+     * The arguments for the GET request method.
      *
      * @var array
      */
-    protected $_get_args            = array();
+    protected $_get_args = array();
 
     /**
-     * The arguments for the POST request method
+     * The arguments for the POST request method.
      *
      * @var array
      */
-    protected $_post_args           = array();
+    protected $_post_args = array();
 
     /**
-     * The insert_id of the log entry (if we have one)
+     * The insert_id of the log entry (if we have one).
      *
      * @var string
-    */
-    protected $_insert_id           = '';
+     */
+    protected $_insert_id = '';
 
     /**
-     * The arguments for the PUT request method
+     * The arguments for the PUT request method.
      *
      * @var array
      */
-    protected $_put_args            = array();
+    protected $_put_args = array();
 
     /**
-     * The arguments for the DELETE request method
+     * The arguments for the DELETE request method.
      *
      * @var array
      */
-    protected $_delete_args         = array();
+    protected $_delete_args = array();
 
     /**
-     * The arguments for the PATCH request method
+     * The arguments for the PATCH request method.
      *
      * @var array
      */
-    protected $_patch_args          = array();
+    protected $_patch_args = array();
 
     /**
-     * The arguments for the HEAD request method
+     * The arguments for the HEAD request method.
      *
      * @var array
      */
-    protected $_head_args           = array();
+    protected $_head_args = array();
 
     /**
-     * The arguments for the OPTIONS request method
+     * The arguments for the OPTIONS request method.
      *
      * @var array
      */
-    protected $_options_args        = array();
+    protected $_options_args = array();
 
     /**
      * The arguments from GET, POST, PUT, DELETE request methods combined.
      *
      * @var array
      */
-    protected $_args                = array();
+    protected $_args = array();
 
     /**
      * If the request is allowed based on the API key provided.
      *
      * @var boolean
      */
-    protected $_allow               = true;
+    protected $_allow = true;
 
     /**
-     * Determines if output compression is enabled
+     * Determines if output compression is enabled.
      *
      * @var boolean
      */
-    protected $_zlib_oc             = false;
+    protected $_zlib_oc = false;
 
     /**
-     * The LDAP Distinguished Name of the User post authentication
+     * The LDAP Distinguished Name of the User post authentication.
      *
      * @var string
-    */
-    protected $_user_ldap_dn        = '';
+     */
+    protected $_user_ldap_dn = '';
 
     /**
-     * The start of the response time from the server
+     * The start of the response time from the server.
      *
      * @var string
-    */
-    protected $_start_rtime         = '';
+     */
+    protected $_start_rtime = '';
 
     /**
-     * The end of the response time from the server
+     * The end of the response time from the server.
      *
      * @var string
-    */
-    protected $_end_rtime           = '';
+     */
+    protected $_end_rtime = '';
 
     /**
-     * List all supported methods, the first will be the default format
+     * List all supported methods, the first will be the default format.
      *
      * @var array
      */
-    protected $_supported_formats   = array(
-        'xml'           => 'application/xml',
-        'json'          => 'application/json',
-        'jsonp'         => 'application/javascript',
-        'serialized'    => 'application/vnd.php.serialized',
-        'php'           => 'text/plain',
-        'html'          => 'text/html',
-        'csv'           => 'application/csv'
+    protected $_supported_formats = array(
+        'xml' => 'application/xml',
+        'json' => 'application/json',
+        'jsonp' => 'application/javascript',
+        'serialized' => 'application/vnd.php.serialized',
+        'php' => 'text/plain',
+        'html' => 'text/html',
+        'csv' => 'application/csv',
     );
 
     /**
-     * Information about the current API user
+     * Information about the current API user.
      *
      * @var object
      */
@@ -185,11 +188,11 @@ abstract class REST_Controller extends MX_Controller
      */
     protected function early_checks()
     {
-
     }
 
     /**
-     * Constructor function
+     * Constructor function.
+     *
      * @todo Document more please.
      */
     public function __construct($config = 'rest')
@@ -206,13 +209,13 @@ abstract class REST_Controller extends MX_Controller
         $this->load->library('format');
 
         // init objects
-        $this->response     = new stdClass();
-        $this->rest         = new stdClass();
+        $this->response = new stdClass();
+        $this->rest = new stdClass();
 
-        $this->_zlib_oc     = @ini_get('zlib.output_compression');
+        $this->_zlib_oc = @ini_get('zlib.output_compression');
 
         // let's learn about the request
-        $this->request      = new stdClass();
+        $this->request = new stdClass();
 
         // Check to see if this IP is Blacklisted
         if ($this->config->item('rest_ip_blacklist_enabled')) {
@@ -220,10 +223,10 @@ abstract class REST_Controller extends MX_Controller
         }
 
         // Is it over SSL?
-        $this->request->ssl     = $this->_detect_ssl();
+        $this->request->ssl = $this->_detect_ssl();
 
         // How is this request being made? POST, DELETE, GET, PUT?
-        $this->request->method  = $this->_detect_method();
+        $this->request->method = $this->_detect_method();
 
         // Create argument container, if nonexistent
         if (!isset($this->{'_'.$this->request->method.'_args'})) {
@@ -231,15 +234,15 @@ abstract class REST_Controller extends MX_Controller
         }
 
         // Set up our GET variables
-        $this->_get_args        = array_merge($this->_get_args, $this->uri->ruri_to_assoc());
+        $this->_get_args = array_merge($this->_get_args, $this->uri->ruri_to_assoc());
 
         // Try to find a format for the request (means we have a request body)
-        $this->request->format  = $this->_detect_input_format();
+        $this->request->format = $this->_detect_input_format();
 
         // Some Methods cant have a body
-        $this->request->body    = null;
+        $this->request->body = null;
 
-        $this->{'_parse_' . $this->request->method}();
+        $this->{'_parse_'.$this->request->method}();
 
         // Now we know all about our request, let's try and parse the body if it exists
         if ($this->request->format and $this->request->body) {
@@ -252,7 +255,7 @@ abstract class REST_Controller extends MX_Controller
         $this->_args = array_merge($this->_get_args,
             $this->_options_args,
             $this->_patch_args,
-            $this->_head_args ,
+            $this->_head_args,
             $this->_put_args,
             $this->_post_args,
             $this->_delete_args,
@@ -260,33 +263,33 @@ abstract class REST_Controller extends MX_Controller
         );
 
         // Which format should the data be returned in?
-        $this->response         = new stdClass();
+        $this->response = new stdClass();
         $this->response->format = $this->_detect_output_format();
 
         // Which format should the data be returned in?
-        $this->response->lang   = $this->_detect_lang();
+        $this->response->lang = $this->_detect_lang();
 
         // Developers can extend this class and add a check in here
         $this->early_checks();
 
-        $this->rest             = new StdClass();
+        $this->rest = new StdClass();
 
         // Load DB if its enabled
         if (config_item('rest_database_group') and (config_item('rest_enable_keys') or config_item('rest_enable_logging'))) {
-            $this->rest->db     = $this->load->database(config_item('rest_database_group'), true);
+            $this->rest->db = $this->load->database(config_item('rest_database_group'), true);
         }
 
         // Use whatever database is in use (isset returns false)
-        elseif (property_exists($this, "db")) {
-            $this->rest->db     = $this->db;
+        elseif (property_exists($this, 'db')) {
+            $this->rest->db = $this->db;
         }
 
         // Check if there is a specific auth type for the current class/method
         // _auth_override_check could exit so we need $this->rest->db initialized before
-        $this->auth_override    = $this->_auth_override_check();
+        $this->auth_override = $this->_auth_override_check();
 
         // Checking for keys? GET TO WorK!
-	// Skip keys test for $config['auth_override_class_method']['class'['method'] = 'none'
+        // Skip keys test for $config['auth_override_class_method']['class'['method'] = 'none'
         if (config_item('rest_enable_keys') and $this->auth_override !== true) {
             $this->_allow = $this->_detect_api_key();
         }
@@ -318,7 +321,8 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Destructor function
+     * Destructor function.
+     *
      * @author Chris Kacerguis
      */
     public function __destruct()
@@ -329,18 +333,17 @@ abstract class REST_Controller extends MX_Controller
         if (config_item('rest_enable_logging')) {
             $this->_log_access_time();
         }
-
     }
 
     /**
-     * Remap
+     * Remap.
      *
      * Requests are not made to methods directly, the request will be for
      * an "object". This simply maps the object and method to the correct
      * Controller method.
      *
      * @param string $object_called
-     * @param array  $arguments     The arguments passed to the controller method.
+     * @param array  $arguments     the arguments passed to the controller method
      */
     public function _remap($object_called, $arguments)
     {
@@ -382,7 +385,7 @@ abstract class REST_Controller extends MX_Controller
         }
 
         // Sure it exists, but can they do anything with it?
-        if ( ! method_exists($this, $controller_method)) {
+        if (!method_exists($this, $controller_method)) {
             $this->response(array(config_item('rest_status_field_name') => false, config_item('rest_message_field_name') => 'Unknown method.'), 404);
         }
 
@@ -411,7 +414,7 @@ abstract class REST_Controller extends MX_Controller
         }
 
         // No key stuff, but record that stuff is happening
-        else if (config_item('rest_enable_logging') and $log_method) {
+        elseif (config_item('rest_enable_logging') and $log_method) {
             $this->_log_request($authorized = true);
         }
 
@@ -420,7 +423,7 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Fire Method
+     * Fire Method.
      *
      * Fires the designated controller method with the given arguments.
      *
@@ -433,14 +436,14 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Response
+     * Response.
      *
      * Takes pure data and optionally a status code, then creates the response.
      * Set $continue to true to flush the response to the client and continue running the script.
      *
      * @param array    $data
      * @param null|int $http_code
-     * @param bool $continue
+     * @param bool     $continue
      */
     public function response($data = null, $http_code = null, $continue = false)
     {
@@ -453,7 +456,7 @@ abstract class REST_Controller extends MX_Controller
         }
 
         // If data is null but http code provided, keep the output empty
-        else if ($data === null && is_numeric($http_code)) {
+        elseif ($data === null && is_numeric($http_code)) {
             $output = null;
         }
 
@@ -474,7 +477,7 @@ abstract class REST_Controller extends MX_Controller
             // If the format method exists, call and return the output in that format
             if (method_exists($this, '_format_'.$this->response->format)) {
                 // Set the correct format header
-                header('Content-Type: '.$this->_supported_formats[$this->response->format] . '; charset=' . strtolower($this->config->item('charset')));
+                header('Content-Type: '.$this->_supported_formats[$this->response->format].'; charset='.strtolower($this->config->item('charset')));
 
                 $output = $this->{'_format_'.$this->response->format}($data);
             }
@@ -482,7 +485,7 @@ abstract class REST_Controller extends MX_Controller
             // If the format method exists, call and return the output in that format
             elseif (method_exists($this->format, 'to_'.$this->response->format)) {
                 // Set the correct format header
-                header('Content-Type: '.$this->_supported_formats[$this->response->format] . '; charset=' . strtolower($this->config->item('charset')));
+                header('Content-Type: '.$this->_supported_formats[$this->response->format].'; charset='.strtolower($this->config->item('charset')));
 
                 $output = $this->format->factory($data)->{'to_'.$this->response->format}();
             }
@@ -499,16 +502,16 @@ abstract class REST_Controller extends MX_Controller
         // but it will not modify the content-length header to compensate for
         // the reduction, causing the browser to hang waiting for more data.
         // We'll just skip content-length in those cases.
-        if ( ! $this->_zlib_oc && ! $this->config->item('compress_output')) {
-            header('Content-Length: ' . strlen($output));
+        if (!$this->_zlib_oc && !$this->config->item('compress_output')) {
+            header('Content-Length: '.strlen($output));
         }
 
-        if($continue){
-            echo($output);
+        if ($continue) {
+            echo $output;
             ob_end_flush();
             ob_flush();
             flush();
-        }else{
+        } else {
             exit($output);
         }
     }
@@ -520,9 +523,8 @@ abstract class REST_Controller extends MX_Controller
      */
     protected function _detect_ssl()
     {
-            return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on");
+        return isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on';
     }
-
 
     /*
      * Detect input format
@@ -548,11 +550,11 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Detect format
+     * Detect format.
      *
      * Detect which format should be used to output the data.
      *
-     * @return string The output format.
+     * @return string the output format
      */
     protected function _detect_output_format()
     {
@@ -566,13 +568,13 @@ abstract class REST_Controller extends MX_Controller
 
         // Check if a file extension is used
         elseif ($this->_get_args and !is_array(end($this->_get_args)) and preg_match($pattern, end($this->_get_args), $matches)) {
-        //elseif ($this->_get_args and !is_array(end($this->_get_args)) and preg_match($pattern, end(array_keys($this->_get_args)), $matches)) {
+            //elseif ($this->_get_args and !is_array(end($this->_get_args)) and preg_match($pattern, end(array_keys($this->_get_args)), $matches)) {
             // The key of the last argument
             $last_key = end(array_keys($this->_get_args));
 
             // Remove the extension from arguments too
             $this->_get_args[$last_key] = preg_replace($pattern, '', $this->_get_args[$last_key]);
-            $this->_args[$last_key]     = preg_replace($pattern, '', $this->_args[$last_key]);
+            $this->_args[$last_key] = preg_replace($pattern, '', $this->_args[$last_key]);
 
             return $matches[1];
         }
@@ -610,7 +612,7 @@ abstract class REST_Controller extends MX_Controller
         } // End HTTP_ACCEPT checking
 
         // Well, none of that has worked! Let's see if the controller has a default
-        if ( ! empty($this->rest_format)) {
+        if (!empty($this->rest_format)) {
             return $this->rest_format;
         }
 
@@ -619,7 +621,7 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Detect method
+     * Detect method.
      *
      * Detect which HTTP method is being used
      *
@@ -637,7 +639,7 @@ abstract class REST_Controller extends MX_Controller
             }
         }
 
-        if (in_array($method, $this->allowed_http_methods) && method_exists($this, '_parse_' . $method)) {
+        if (in_array($method, $this->allowed_http_methods) && method_exists($this, '_parse_'.$method)) {
             return $method;
         }
 
@@ -645,7 +647,7 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Detect API Key
+     * Detect API Key.
      *
      * See if the user has provided an API key
      *
@@ -666,7 +668,7 @@ abstract class REST_Controller extends MX_Controller
 
         // Find the key from server or arguments
         if (($key = isset($this->_args[$api_key_variable]) ? $this->_args[$api_key_variable] : $this->input->server($key_name))) {
-            if ( ! ($row = $this->rest->db->where(config_item('rest_key_column'), $key)->get(config_item('rest_keys_table'))->row())) {
+            if (!($row = $this->rest->db->where(config_item('rest_key_column'), $key)->get(config_item('rest_keys_table'))->row())) {
                 return false;
             }
 
@@ -676,7 +678,7 @@ abstract class REST_Controller extends MX_Controller
             isset($row->level) and $this->rest->level = $row->level;
             isset($row->ignore_limits) and $this->rest->ignore_limits = $row->ignore_limits;
 
-            $this->_apiuser =  $row;
+            $this->_apiuser = $row;
 
             /*
              * If "is private key" is enabled, compare the ip address with the list
@@ -686,7 +688,7 @@ abstract class REST_Controller extends MX_Controller
                 // Check for a list of valid ip addresses
                 if (isset($row->ip_addresses)) {
                     // multiple ip addresses must be separated using a comma, explode and loop
-                    $list_ip_addresses = explode(",", $row->ip_addresses);
+                    $list_ip_addresses = explode(',', $row->ip_addresses);
                     $found_address = false;
 
                     foreach ($list_ip_addresses as $ip_address) {
@@ -712,15 +714,15 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Detect language(s)
+     * Detect language(s).
      *
      * What language do they want it in?
      *
-     * @return null|string The language code.
+     * @return null|string the language code
      */
     protected function _detect_lang()
     {
-        if ( ! $lang = $this->input->server('HTTP_ACCEPT_LANGUAGE')) {
+        if (!$lang = $this->input->server('HTTP_ACCEPT_LANGUAGE')) {
             return null;
         }
 
@@ -743,11 +745,12 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Log request
+     * Log request.
      *
      * Record the entry for awesomeness purposes
      *
-     * @param  boolean $authorized
+     * @param bool $authorized
+     *
      * @return object
      */
     protected function _log_request($authorized = false)
@@ -759,7 +762,7 @@ abstract class REST_Controller extends MX_Controller
                     'api_key' => isset($this->rest->key) ? $this->rest->key : '',
                     'ip_address' => $this->input->ip_address(),
                     'time' => function_exists('now') ? now() : time(),
-                    'authorized' => $authorized
+                    'authorized' => $authorized,
                 ));
 
         $this->_insert_id = $this->rest->db->insert_id();
@@ -768,17 +771,18 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Limiting requests
+     * Limiting requests.
      *
      * Check if the requests are coming in a tad too fast.
      *
-     * @param  string  $controller_method The method being called.
+     * @param string $controller_method the method being called
+     *
      * @return boolean
      */
     protected function _check_limit($controller_method)
     {
         // They are special, or it might not even have a limit
-        if ( ! empty($this->rest->ignore_limits) or !isset($this->methods[$controller_method]['limit'])) {
+        if (!empty($this->rest->ignore_limits) or !isset($this->methods[$controller_method]['limit'])) {
             // On your way sonny-jim.
             return true;
         }
@@ -794,18 +798,18 @@ abstract class REST_Controller extends MX_Controller
                 ->row();
 
         // No calls yet for this key
-        if ( ! $result ) {
+        if (!$result) {
             // Right, set one up from scratch
             $this->rest->db->insert(config_item('rest_limits_table'), array(
                 'uri' => $this->uri->uri_string(),
                 'api_key' => isset($this->rest->key) ? $this->rest->key : '',
                 'count' => 1,
-                'hour_started' => time()
+                'hour_started' => time(),
             ));
         }
 
         // Been an hour since they called
-        else if ($result->hour_started < time() - (60 * 60)) {
+        elseif ($result->hour_started < time() - (60 * 60)) {
             // Reset the started period
             $this->rest->db
                     ->where('uri', $this->uri->uri_string())
@@ -833,7 +837,7 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Auth override check
+     * Auth override check.
      *
      * Check if there is a specific auth type set for the current class/method
      * being called.
@@ -842,7 +846,6 @@ abstract class REST_Controller extends MX_Controller
      */
     protected function _auth_override_check()
     {
-
         // Assign the class/method auth type override array from the config
         $this->overrides_array = $this->config->item('auth_override_class_method');
 
@@ -852,31 +855,30 @@ abstract class REST_Controller extends MX_Controller
         }
 
         // check for wildcard flag for rules for classes
-        if(!empty($this->overrides_array[$this->router->class]['*'])){//check for class overides
+        if (!empty($this->overrides_array[$this->router->class]['*'])) {//check for class overides
             // None auth override found, prepare nothing but send back a true override flag
-            if ($this->overrides_array[$this->router->class]['*'] == 'none')
-            {
+            if ($this->overrides_array[$this->router->class]['*'] == 'none') {
                 return true;
             }
 
             // Basic auth override found, prepare basic
-            if ($this->overrides_array[$this->router->class]['*'] == 'basic')
-            {
+            if ($this->overrides_array[$this->router->class]['*'] == 'basic') {
                 $this->_prepare_basic_auth();
+
                 return true;
             }
 
             // Digest auth override found, prepare digest
-            if ($this->overrides_array[$this->router->class]['*'] == 'digest')
-            {
+            if ($this->overrides_array[$this->router->class]['*'] == 'digest') {
                 $this->_prepare_digest_auth();
+
                 return true;
             }
 
             // Whitelist auth override found, check client's ip against config whitelist
-            if ($this->overrides_array[$this->router->class]['*'] == 'whitelist')
-            {
+            if ($this->overrides_array[$this->router->class]['*'] == 'whitelist') {
                 $this->_check_whitelist_auth();
+
                 return true;
             }
         }
@@ -918,7 +920,7 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Parse GET
+     * Parse GET.
      */
     protected function _parse_get()
     {
@@ -926,7 +928,7 @@ abstract class REST_Controller extends MX_Controller
         if ($this->input->is_cli_request()) {
             $args = $_SERVER['argv'];
             unset($args[0]);
-            $_SERVER['QUERY_STRING'] =  $_SERVER['PATH_INFO'] = $_SERVER['REQUEST_URI'] = '/' . implode('/', $args) . '/';
+            $_SERVER['QUERY_STRING'] = $_SERVER['PATH_INFO'] = $_SERVER['REQUEST_URI'] = '/'.implode('/', $args).'/';
         }
 
         // Grab proper GET variables
@@ -937,7 +939,7 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Parse POST
+     * Parse POST.
      */
     protected function _parse_post()
     {
@@ -947,7 +949,7 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Parse PUT
+     * Parse PUT.
      */
     protected function _parse_put()
     {
@@ -960,11 +962,10 @@ abstract class REST_Controller extends MX_Controller
         else {
             parse_str(file_get_contents('php://input'), $this->_put_args);
         }
-
     }
 
     /**
-     * Parse HEAD
+     * Parse HEAD.
      */
     protected function _parse_head()
     {
@@ -976,7 +977,7 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Parse OPTIONS
+     * Parse OPTIONS.
      */
     protected function _parse_options()
     {
@@ -988,7 +989,7 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Parse PATCH
+     * Parse PATCH.
      */
     protected function _parse_patch()
     {
@@ -1004,7 +1005,7 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Parse DELETE
+     * Parse DELETE.
      */
     protected function _parse_delete()
     {
@@ -1017,9 +1018,10 @@ abstract class REST_Controller extends MX_Controller
     /**
      * Retrieve a value from the GET request arguments.
      *
-     * @param  string  $key       The key for the GET request argument to retrieve
-     * @param  boolean $xss_clean Whether the value should be XSS cleaned or not.
-     * @return string  The GET argument value.
+     * @param string $key       The key for the GET request argument to retrieve
+     * @param bool   $xss_clean whether the value should be XSS cleaned or not
+     *
+     * @return string the GET argument value
      */
     public function get($key = null, $xss_clean = true)
     {
@@ -1031,11 +1033,12 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * This function retrieves a values from the OPTIONS request arguments
+     * This function retrieves a values from the OPTIONS request arguments.
      *
-     * @param  string  $key       The OPTIONS/GET argument key
-     * @param  boolean $xss_clean Whether the value should be XSS cleaned or not
-     * @return string  The OPTIONS/GET argument value
+     * @param string $key       The OPTIONS/GET argument key
+     * @param bool   $xss_clean Whether the value should be XSS cleaned or not
+     *
+     * @return string The OPTIONS/GET argument value
      */
     public function options($key = null, $xss_clean = true)
     {
@@ -1047,11 +1050,12 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * This function retrieves a values from the HEAD request arguments
+     * This function retrieves a values from the HEAD request arguments.
      *
-     * @param  string  $key       The HEAD/GET argument key
-     * @param  boolean $xss_clean Whether the value should be XSS cleaned or not
-     * @return string  The HEAD/GET argument value
+     * @param string $key       The HEAD/GET argument key
+     * @param bool   $xss_clean Whether the value should be XSS cleaned or not
+     *
+     * @return string The HEAD/GET argument value
      */
     public function head($key = null, $xss_clean = true)
     {
@@ -1065,9 +1069,10 @@ abstract class REST_Controller extends MX_Controller
     /**
      * Retrieve a value from the POST request arguments.
      *
-     * @param  string  $key       The key for the POST request argument to retrieve
-     * @param  boolean $xss_clean Whether the value should be XSS cleaned or not.
-     * @return string  The POST argument value.
+     * @param string $key       The key for the POST request argument to retrieve
+     * @param bool   $xss_clean whether the value should be XSS cleaned or not
+     *
+     * @return string the POST argument value
      */
     public function post($key = null, $xss_clean = true)
     {
@@ -1081,9 +1086,10 @@ abstract class REST_Controller extends MX_Controller
     /**
      * Retrieve a value from the PUT request arguments.
      *
-     * @param  string  $key       The key for the PUT request argument to retrieve
-     * @param  boolean $xss_clean Whether the value should be XSS cleaned or not.
-     * @return string  The PUT argument value.
+     * @param string $key       The key for the PUT request argument to retrieve
+     * @param bool   $xss_clean whether the value should be XSS cleaned or not
+     *
+     * @return string the PUT argument value
      */
     public function put($key = null, $xss_clean = true)
     {
@@ -1097,9 +1103,10 @@ abstract class REST_Controller extends MX_Controller
     /**
      * Retrieve a value from the DELETE request arguments.
      *
-     * @param  string  $key       The key for the DELETE request argument to retrieve
-     * @param  boolean $xss_clean Whether the value should be XSS cleaned or not.
-     * @return string  The DELETE argument value.
+     * @param string $key       The key for the DELETE request argument to retrieve
+     * @param bool   $xss_clean whether the value should be XSS cleaned or not
+     *
+     * @return string the DELETE argument value
      */
     public function delete($key = null, $xss_clean = true)
     {
@@ -1113,9 +1120,10 @@ abstract class REST_Controller extends MX_Controller
     /**
      * Retrieve a value from the PATCH request arguments.
      *
-     * @param  string  $key       The key for the PATCH request argument to retrieve
-     * @param  boolean $xss_clean Whether the value should be XSS cleaned or not.
-     * @return string  The PATCH argument value.
+     * @param string $key       The key for the PATCH request argument to retrieve
+     * @param bool   $xss_clean whether the value should be XSS cleaned or not
+     *
+     * @return string the PATCH argument value
      */
     public function patch($key = null, $xss_clean = true)
     {
@@ -1129,8 +1137,9 @@ abstract class REST_Controller extends MX_Controller
     /**
      * Process to protect from XSS attacks.
      *
-     * @param  string  $val     The input.
-     * @param  boolean $process Do clean or note the input.
+     * @param string $val     the input
+     * @param bool   $process do clean or note the input
+     *
      * @return string
      */
     protected function _xss_clean($val, $process)
@@ -1157,10 +1166,11 @@ abstract class REST_Controller extends MX_Controller
     // SECURITY FUNCTIONS ---------------------------------------------------------
 
     /**
-     * Perform LDAP Authentication
+     * Perform LDAP Authentication.
      *
-     * @param  string  $username The username to validate
-     * @param  string  $password The password to validate
+     * @param string $username The username to validate
+     * @param string $password The password to validate
+     *
      * @return boolean
      */
     protected function _perform_ldap_auth($username = '', $password = null)
@@ -1182,7 +1192,7 @@ abstract class REST_Controller extends MX_Controller
         $ldappass = $this->config->item('bindpw', 'ldap');
         $ldapbasedn = $this->config->item('basedn', 'ldap');
 
-        log_message('debug', 'LDAP Auth: Connect to ' . $ldaphost);
+        log_message('debug', 'LDAP Auth: Connect to '.$ldaphost);
 
         $ldapconfig['authrealm'] = $this->config->item('domain', 'ldap');
 
@@ -1190,12 +1200,11 @@ abstract class REST_Controller extends MX_Controller
         $ldapconn = ldap_connect($ldaphost, $ldapport);
 
         if ($ldapconn) {
-
-            log_message('debug', 'Setting timeout to ' . $ldaptimeout . ' seconds');
+            log_message('debug', 'Setting timeout to '.$ldaptimeout.' seconds');
 
             ldap_set_option($ldapconn, LDAP_OPT_NETWORK_TIMEOUT, $ldaptimeout);
 
-            log_message('debug', 'LDAP Auth: Binding to ' . $ldaphost . ' with dn ' . $ldaprdn);
+            log_message('debug', 'LDAP Auth: Binding to '.$ldaphost.' with dn '.$ldaprdn);
 
             // binding to ldap server
             $ldapbind = ldap_bind($ldapconn, $ldaprdn, $ldappass);
@@ -1208,29 +1217,28 @@ abstract class REST_Controller extends MX_Controller
 
                 return false;
             }
-
         }
 
         // search for user
-        if (($res_id = ldap_search( $ldapconn, $ldapbasedn, "uid=$username")) == false) {
-            log_message('error', 'LDAP Auth: User ' . $username . ' not found in search');
+        if (($res_id = ldap_search($ldapconn, $ldapbasedn, "uid=$username")) == false) {
+            log_message('error', 'LDAP Auth: User '.$username.' not found in search');
 
             return false;
         }
 
         if (ldap_count_entries($ldapconn, $res_id) != 1) {
-            log_message('error', 'LDAP Auth: failure, username ' . $username . 'found more than once');
+            log_message('error', 'LDAP Auth: failure, username '.$username.'found more than once');
 
             return false;
         }
 
-        if (( $entry_id = ldap_first_entry($ldapconn, $res_id))== false) {
+        if (($entry_id = ldap_first_entry($ldapconn, $res_id)) == false) {
             log_message('error', 'LDAP Auth: failure, entry of searchresult could not be fetched');
 
             return false;
         }
 
-        if (( $user_dn = ldap_get_dn($ldapconn, $entry_id)) == false) {
+        if (($user_dn = ldap_get_dn($ldapconn, $entry_id)) == false) {
             log_message('error', 'LDAP Auth: failure, user-dn could not be fetched');
 
             return false;
@@ -1238,12 +1246,12 @@ abstract class REST_Controller extends MX_Controller
 
         // User found, could not authenticate as user
         if (($link_id = ldap_bind($ldapconn, $user_dn, $password)) == false) {
-            log_message('error', 'LDAP Auth: failure, username/password did not match: ' . $user_dn);
+            log_message('error', 'LDAP Auth: failure, username/password did not match: '.$user_dn);
 
             return false;
         }
 
-        log_message('debug', 'LDAP Auth: Success ' . $user_dn . ' authenticated successfully');
+        log_message('debug', 'LDAP Auth: Success '.$user_dn.' authenticated successfully');
 
         $this->_user_ldap_dn = $user_dn;
         ldap_close($ldapconn);
@@ -1252,29 +1260,33 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Perform Library Authentication - Override this function to change the way the library is called
+     * Perform Library Authentication - Override this function to change the way the library is called.
      *
-     * @param  string  $username The username to validate
-     * @param  string  $password The password to validate
+     * @param string $username The username to validate
+     * @param string $password The password to validate
+     *
      * @return boolean
      */
     protected function _perform_library_auth($username = '', $password = null)
     {
         if (empty($username)) {
             log_message('error', 'Library Auth: failure, empty username');
+
             return false;
         }
 
-        $auth_library_class     = strtolower($this->config->item('auth_library_class'));
-        $auth_library_function  = strtolower($this->config->item('auth_library_function'));
+        $auth_library_class = strtolower($this->config->item('auth_library_class'));
+        $auth_library_function = strtolower($this->config->item('auth_library_function'));
 
         if (empty($auth_library_class)) {
             log_message('debug', 'Library Auth: failure, empty auth_library_class');
+
             return false;
         }
 
         if (empty($auth_library_function)) {
             log_message('debug', 'Library Auth: failure, empty auth_library_function');
+
             return false;
         }
 
@@ -1288,8 +1300,9 @@ abstract class REST_Controller extends MX_Controller
     /**
      * Check if the user is logged in.
      *
-     * @param  string  $username The user's name
-     * @param  string  $password The user's password
+     * @param string $username The user's name
+     * @param string $password The user's password
+     *
      * @return boolean
      */
     protected function _check_login($username = '', $password = false)
@@ -1303,7 +1316,7 @@ abstract class REST_Controller extends MX_Controller
         $valid_logins = $this->config->item('rest_valid_logins');
 
         if (!$this->config->item('auth_source') && $rest_auth == 'digest') { // for digest we do not have a password passed as argument
-            return md5($username.':'.$this->config->item('rest_realm').':'.(isset($valid_logins[$username])?$valid_logins[$username]:''));
+            return md5($username.':'.$this->config->item('rest_realm').':'.(isset($valid_logins[$username]) ? $valid_logins[$username] : ''));
         }
 
         if ($password === false) {
@@ -1370,7 +1383,7 @@ abstract class REST_Controller extends MX_Controller
             }
         }
 
-        if ( ! $this->_check_login($username, $password)) {
+        if (!$this->_check_login($username, $password)) {
             $this->_force_login();
         }
     }
@@ -1385,7 +1398,7 @@ abstract class REST_Controller extends MX_Controller
             $this->_check_whitelist_auth();
         }
 
-        $uniqid = uniqid(""); // Empty argument for backward compatibility
+        $uniqid = uniqid(''); // Empty argument for backward compatibility
         // We need to test which server authentication variable to use
         // because the PHP ISAPI module in IIS acts different from CGI
         if ($this->input->server('PHP_AUTH_DIGEST')) {
@@ -1393,7 +1406,7 @@ abstract class REST_Controller extends MX_Controller
         } elseif ($this->input->server('HTTP_AUTHORIZATION')) {
             $digest_string = $this->input->server('HTTP_AUTHORIZATION');
         } else {
-            $digest_string = "";
+            $digest_string = '';
         }
 
         // The $_SESSION['error_prompted'] variable is used to ask the password
@@ -1409,7 +1422,7 @@ abstract class REST_Controller extends MX_Controller
 
         // For digest authentication the library function should return already stored md5(username:restrealm:password) for that username @see rest.php::auth_library_function config
         $A1 = $this->_check_login($digest['username'], true);
-        if ( ! array_key_exists('username', $digest) or ! $A1 ) {
+        if (!array_key_exists('username', $digest) or !$A1) {
             $this->_force_login($uniqid);
         }
 
@@ -1423,13 +1436,13 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Check if the client's ip is in the 'rest_ip_blacklist' config
+     * Check if the client's ip is in the 'rest_ip_blacklist' config.
      */
     protected function _check_blacklist_auth()
     {
         $blacklist = explode(',', config_item('rest_ip_blacklist'));
 
-        foreach ($blacklist AS &$ip) {
+        foreach ($blacklist as &$ip) {
             $ip = trim($ip);
         }
 
@@ -1439,7 +1452,7 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Check if the client's ip is in the 'rest_ip_whitelist' config
+     * Check if the client's ip is in the 'rest_ip_whitelist' config.
      */
     protected function _check_whitelist_auth()
     {
@@ -1447,11 +1460,11 @@ abstract class REST_Controller extends MX_Controller
 
         array_push($whitelist, '127.0.0.1', '0.0.0.0');
 
-        foreach ($whitelist AS &$ip) {
+        foreach ($whitelist as &$ip) {
             $ip = trim($ip);
         }
 
-        if ( ! in_array($this->input->ip_address(), $whitelist)) {
+        if (!in_array($this->input->ip_address(), $whitelist)) {
             $this->response(array(config_item('rest_status_field_name') => false, config_item('rest_message_field_name') => 'IP not authorized'), 401);
         }
     }
@@ -1463,9 +1476,9 @@ abstract class REST_Controller extends MX_Controller
      */
     protected function _force_login($nonce = '')
     {
-        if (strtolower( $this->config->item('rest_auth') ) == 'basic') {
+        if (strtolower($this->config->item('rest_auth')) == 'basic') {
             header('WWW-Authenticate: Basic realm="'.$this->config->item('rest_realm').'"');
-        } elseif (strtolower( $this->config->item('rest_auth') ) == 'digest') {
+        } elseif (strtolower($this->config->item('rest_auth')) == 'digest') {
             header('WWW-Authenticate: Digest realm="'.$this->config->item('rest_realm').'", qop="auth", nonce="'.$nonce.'", opaque="'.md5($this->config->item('rest_realm')).'"');
         }
 
@@ -1473,15 +1486,16 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Force it into an array
+     * Force it into an array.
      *
-     * @param  object|array $data
+     * @param object|array $data
+     *
      * @return array
      */
     protected function _force_loopable($data)
     {
         // Force it to be something useful
-        if ( ! is_array($data) and !is_object($data)) {
+        if (!is_array($data) and !is_object($data)) {
             $data = (array) $data;
         }
 
@@ -1489,12 +1503,12 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * updates the log with the access time
+     * updates the log with the access time.
      *
      * @author Chris Kacerguis
+     *
      * @return boolean
      */
-
     protected function _log_access_time()
     {
         $payload['rtime'] = $this->_end_rtime - $this->_start_rtime;
@@ -1503,7 +1517,7 @@ abstract class REST_Controller extends MX_Controller
     }
 
     /**
-     * Check to see if the API key has access to the controller and methods
+     * Check to see if the API key has access to the controller and methods.
      *
      * @return boolean
      */
@@ -1515,7 +1529,7 @@ abstract class REST_Controller extends MX_Controller
         }
 
         // Fetch controller based on path and controller name
-        $controller = implode( '/', array($this->router->fetch_directory(), $this->router->fetch_class()) );
+        $controller = implode('/', array($this->router->fetch_directory(), $this->router->fetch_class()));
 
         // Remove any double slashes for safety
         $controller = str_replace('//', '/', $controller);
@@ -1533,5 +1547,4 @@ abstract class REST_Controller extends MX_Controller
 
         return false;
     }
-
 }

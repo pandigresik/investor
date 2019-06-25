@@ -1,7 +1,7 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 $config['pagination'] = array(
     'base_url' => '',
-    'uri_segment'=> 3,
+    'uri_segment'=> 4,
     'full_tag_open'=> "<ul class='pagination'>",
     'full_tag_close'=> "</ul>",
     'num_tag_open'=> '<li>',

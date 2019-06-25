@@ -1,5 +1,6 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
 | -------------------------------------------------------------------
@@ -39,16 +40,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |  $autoload['packages'] = array(APPPATH.'third_party', '/usr/local/shared');
 |
 */
-
 $autoload['packages'] = array();
-
 
 /*
 | -------------------------------------------------------------------
 |  Auto-load Libraries
 | -------------------------------------------------------------------
-| These are the classes located in the system/libraries folder
-| or in your application/libraries folder.
+| These are the classes located in system/libraries/ or your
+| application/libraries/ directory, with the addition of the
+| 'database' library, which is somewhat of a special case.
 |
 | Prototype:
 |
@@ -59,25 +59,22 @@ $autoload['packages'] = array();
 |
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
-
-$autoload['libraries'] = array('database','session','pagination');
-
+$autoload['libraries'] = array('database','table','form_builder','pagination');
 
 /*
 | -------------------------------------------------------------------
 |  Auto-load Drivers
 | -------------------------------------------------------------------
-| These classes are located in the system/libraries folder or in your
-| application/libraries folder within their own subdirectory. They
+| These classes are located in system/libraries/ or in your
+| application/libraries/ directory, but are also placed inside their
+| own subdirectory and they extend the CI_Driver_Library class. They
 | offer multiple interchangeable driver options.
 |
 | Prototype:
 |
 |	$autoload['drivers'] = array('cache');
 */
-
 $autoload['drivers'] = array();
-
 
 /*
 | -------------------------------------------------------------------
@@ -87,9 +84,7 @@ $autoload['drivers'] = array();
 |
 |	$autoload['helper'] = array('url', 'file');
 */
-
-$autoload['helper'] = array('url','app');
-
+$autoload['helper'] = array('form', 'url', 'app', 'button');
 
 /*
 | -------------------------------------------------------------------
@@ -103,9 +98,7 @@ $autoload['helper'] = array('url','app');
 | config files.  Otherwise, leave it blank.
 |
 */
-
-$autoload['config'] = array();
-
+$autoload['config'] = array('app','pagination');
 
 /*
 | -------------------------------------------------------------------
@@ -119,9 +112,7 @@ $autoload['config'] = array();
 | "codeigniter_lang.php" would be referenced as array('codeigniter');
 |
 */
-
 $autoload['language'] = array();
-
 
 /*
 | -------------------------------------------------------------------
@@ -136,5 +127,4 @@ $autoload['language'] = array();
 |
 |	$autoload['model'] = array('first_model' => 'first');
 */
-
 $autoload['model'] = array();

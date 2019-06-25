@@ -2,6 +2,13 @@
 
 -- DROP TABLE public.sales_order_investor;
 
+CREATE SEQUENCE sales_order_investor_id_seq
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+
 CREATE TABLE public.sales_order_investor
 (
   id integer NOT NULL DEFAULT nextval('sales_order_investor_id_seq'::regclass),
@@ -43,3 +50,16 @@ COMMENT ON COLUMN public.sales_order_investor.create_date IS 'Created on';
 COMMENT ON COLUMN public.sales_order_investor.write_uid IS 'Last Updated by';
 COMMENT ON COLUMN public.sales_order_investor.write_date IS 'Last Updated on';
 
+select * from res_partner order by id
+
+select * from res_users where partner_id in (
+select id from res_partner 
+)
+
+partner_id  = 3
+sale_order_id = 35
+user_id = 1
+select * from sale_order
+
+insert into sales_order_investor(amount,sales_order_id,partner_id,create_uid)
+values(1,35,3,1)
