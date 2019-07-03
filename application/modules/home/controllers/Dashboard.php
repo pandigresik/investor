@@ -17,7 +17,7 @@ class Dashboard extends MY_Controller
         $sql = <<<SQL
         select so.id,so.name,soi.amount,so.state,so.date_order,so.invoice_status,so.amount_total,(select count(*) from account_invoice ai where ai.origin = so.name ) as jml_cicilan,(select sum(ai.amount_total) from account_invoice ai where ai.state = 'paid' and ai.origin = so.name )  as terbayar
 from sale_order so
-join sales_order_investor soi on so.id = soi.sales_order_id
+join ks_sales_order_investor soi on so.id = soi.sales_order_id
 where soi.partner_id = {$userId}
 SQL;
         return $this->db->query($sql)->result_array();
