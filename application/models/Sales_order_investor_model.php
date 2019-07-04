@@ -5,9 +5,9 @@ class Sales_order_investor_model extends MY_Model
     public $_table = 'ks_sales_order_investor';
     private $joinPartner = FALSE;
     private $joinSO = FALSE;
-    protected $columnTableData = ['ks_sales_order_investor.id','(ks_sales_order_investor.amount * 100) as amount','sale_order.name as sales_order','res_partner.name as investor'];
+    protected $columnTableData = ['ks_sales_order_investor.id','sale_order.name as sales_order','sale_order.amount_total','(sale_order.amount_total - sale_order.margin) as beli' ,'res_partner.name as investor','(ks_sales_order_investor.amount * 100) as amount','(ks_sales_order_investor.amount * (sale_order.amount_total - sale_order.margin)) as modal'];
     protected $headerTableData = [
-        [['data' => 'Pembiayaan (%)'], ['data' => 'Sales Order'], ['data' => 'Investor'],['data' => 'Aksi']],
+        [['data' => 'Sales Order'],['data' => 'Total Transaksi'],['data' => 'Pembelian'], ['data' => 'Investor'],['data' => 'Pembiayaan (%)'],['data' => 'Pembiayaan (Rp)'],['data' => 'Aksi']],
     ];
     protected $before_get = ['joinSO','joinPartner'];
     public function __construct()
