@@ -3,64 +3,45 @@
 class Sales_order_investor_model extends MY_Model
 {   
     public $_table = 'ks_sales_order_investor';
-    
-    protected $columnTableData = ['id','amount','sales_order_id','partner_id'];
+    private $joinPartner = FALSE;
+    private $joinSO = FALSE;
+    protected $columnTableData = ['ks_sales_order_investor.id','(ks_sales_order_investor.amount * 100) as amount','sale_order.name as sales_order','res_partner.name as investor'];
     protected $headerTableData = [
-        [['data' => 'Id'], ['data' => 'Pembiayaan'], ['data' => 'Sales Order'], ['data' => 'Investor']],
+        [['data' => 'Pembiayaan (%)'], ['data' => 'Sales Order'], ['data' => 'Investor'],['data' => 'Aksi']],
     ];
-
+    protected $before_get = ['joinSO','joinPartner'];
     public function __construct()
     {
         parent::__construct();
     }
 
     protected $form = array(
-        'name' => array(
-            'id' => 'name',
-            'label' => 'Name',
-            'placeholder' => 'nama menu',
+        'sales_order_id' => array(
+            'id' => 'sales_order_id',
+            'label' => 'Sales Order',
+            'class' => 'select2_single',
+            'placeholder' => 'Pesanan pelanggan',
             'required' => 'required',
             'value' => '',
+            'type' => 'dropdown',
+            'options' => [''],
         ),
-        'route' => array(
-            'id' => 'route',
-            'label' => 'Route',
-            'placeholder' => 'route atau url ',
+        'amount' => array(
+            'id' => 'amount',
+            'label' => 'Jumlah Pembiayaan (%)',
+            'data-tipe' => 'angka',
+            'max' => 100,
+            'placeholder' => 'pembiayaan',
             'value' => '',
         ),
-        'icon' => array(
-            'id' => 'icon',
-            'label' => 'Icon',
-            'placeholder' => 'icon font awesome',
-            'required' => 'required',
-            'type' => 'input',
-            'value' => '',
-        ),
-        'parent_id' => array(
-            'id' => 'parent_id',
-            'label' => 'Menu Reference',
+        
+        'partner_id' => array(
+            'id' => 'partner_id',
+            'label' => 'Investor',
+            'class' => 'select2_single',
             'type' => 'dropdown',
             'required' => 'required',
-            'options' => array(),
-            'value' => '',
-        ),
-        'status' => array(
-            'id' => 'status',
-            'label' => 'Status',
-            'required' => 'required',
-            'type' => 'dropdown',
-            'options' => array(
-                '1' => 'Aktif',
-                '0' => 'Non Aktif',
-            ),
-            'value' => '',
-        ),
-        'descriptions' => array(
-            'id' => 'descriptions',
-            'label' => 'Deskripsi',
-            'type' => 'textarea',
-            'placeholder' => 'Deskripsi menu',
-            'required' => 'required',
+            'options' => [''],
             'value' => '',
         ),
         'submit' => array(
@@ -72,10 +53,60 @@ class Sales_order_investor_model extends MY_Model
 
     protected function setOptionDataForm($where = array())
     {
-        $parentMenu = $this->dropdown('id', 'name');
-        $parentMenu[0] = 'Menu Utama';
-        ksort($parentMenu);
-        $this->form['parent_id']['options'] = $parentMenu;
-        // $this->form['icon']['options'] = $this->listICon();
+        $this->form['partner_id']['options'] = $this->getAvailableInvestor();
+        $this->form['sales_order_id']['options'] = $this->getAvailableSO();
+    }
+
+    private function getAvailableSO(){
+        $result = [''];
+        $this->load->model('sales_order_model','som');
+        $subquery = 'id not in (select sales_order_id from '.$this->_table.' group by sales_order_id having sum(amount) >= 1)';
+        $tmp = $this->som->as_array()->fields(['id','concat(name,\' - \',amount_total) as name'])->get_many_by($subquery);
+        if(!empty($tmp)){
+            $result = dropdown($tmp,'id','name');
+        }
+        return $result;        
+    }
+
+    private function getAvailableInvestor(){
+        $result = [''];
+        $this->load->model('partner_model','pm');
+        //$tmp = $this->pm->as_array()->fields(['id','name'])->get_many_by(['supplier' => 't']);
+        $tmp = $this->pm->as_array()->fields(['id','name'])->get_all();
+        if(!empty($tmp)){
+            $result = dropdown($tmp,'id','name');
+        }
+        
+        return $result;        
+    }
+
+    public function joinSO(){
+        if($this->getJoinSO()){
+            $this->_database->join('sale_order','sale_order.id = ks_sales_order_investor.sales_order_id');
+        }
+    }
+
+    public function joinPartner(){
+        if($this->getJoinPartner()){
+            $this->_database->join('res_partner','res_partner.id = ks_sales_order_investor.partner_id');
+        }
+    }
+
+    public function getJoinPartner(){
+        return $this->joinPartner;
+    }
+
+    public function setJoinPartner($joinPartner){
+        $this->joinPartner = $joinPartner;
+        return $this;
+    }
+
+    public function getJoinSO(){
+        return $this->joinSO;
+    }
+
+    public function setJoinSO($joinSO){
+        $this->joinSO = $joinSO;
+        return $this;
     }
 }

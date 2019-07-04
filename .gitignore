@@ -1,8 +1,4 @@
 /application/cache/*
 /application/logs
 /application/config/database.php
-/file_upload
-/filetimbang
-/catatan/contoh_plat
-/application/third_party/ALPR/images
-/application/third_party/ALPR/imgOriginalScene.png
+/application/config/config.php

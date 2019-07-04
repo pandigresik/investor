@@ -367,7 +367,7 @@ class MY_Controller extends MX_Controller
     {
         $where = $this->input->post('key');
         $data = $this->model->get_by($where);
-        echo 'Apakah anda yakin akan menghapus data mesin finger ini '.json_encode($data).' ?';
+        echo 'Apakah anda yakin akan menghapus data ini '.json_encode($data).' ?';
     }
 
     public function toPdf($config = [], $html, $name = null)
