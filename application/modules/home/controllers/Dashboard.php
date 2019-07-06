@@ -10,7 +10,31 @@ class Dashboard extends MY_Controller
     {
         $userId = $this->session->userdata('partner_id');
         $data = $this->dataSO($userId);
-        $this->load->view('home/dashboard', ['data' => $data]);
+        $dataDashboard = [
+            ['title' => 'Investasi','count' => 3000000, 'description' => 'Investasi awal','icon' => 'fa fa-briefcase'],
+            ['title' => 'Pembiayaan','count' => 30, 'description' => 'Penjualan kredit yang dibiayai','icon' => 'fa fa-shopping-cart'],
+            ['title' => 'Invoice','count' => '30 (60)', 'description' => 'Invoice yang sudah dibayar','icon' => 'fa fa-file-o'],
+            ['title' => 'Bagi hasil','count' => '6000000', 'description' => 'Total keuntungan yang dibagi berdasarkan kesepakatan','icon' => 'fa fa-money'],
+        ];
+        $summaries = $this->generateCard($dataDashboard);
+        $this->load->view('home/dashboard', ['data' => $data, 'summaries' => $summaries]);
+    }
+
+    private function generateCard($datas){
+        $result = [];
+        foreach($datas as $data){
+            $tmp =
+            '<div class="animated flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="tile-stats">
+                <div class="icon"><i class="'.$data['icon'].'"></i></div>
+                <div class="count">'.$data['count'].'</div>
+                <h3>'.$data['title'].'</h3>
+                <p>'.$data['description'].'</p>
+                </div>
+            </div>';
+            array_push($result,$tmp);
+        }
+        return $result;
     }
 
     private function dataSO($userId){

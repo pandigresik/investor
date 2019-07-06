@@ -24,11 +24,6 @@ table.custom_table tbody td {
 }
 
 
-/*
-table.custom_table tbody tr .ftl .highlight td {
-    background-color: #FF9EF4;
-}*/
-
 table.table-form>tbody>tr>td,
 .table>tbody>tr>th,
 .table>tfoot>tr>td,
@@ -183,4 +178,10 @@ table.text-center>thead>tr>th {
 
 .fa-input {
     font-family: FontAwesome, ‘Helvetica Neue’, Helvetica, Arial, sans-serif;
+}
+
+.tile-stats .count {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.65857;
 }
