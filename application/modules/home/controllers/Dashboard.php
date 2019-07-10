@@ -22,9 +22,11 @@ class Dashboard extends MY_Controller
 
     public function listSO()
     {
+        $this->title = 'Daftar SO yang dibiayai';
         $userId = $this->session->userdata('partner_id');
         $data = $this->dataSO($userId);
-        $this->load->view('home/listSO', ['data' => $data]);
+        //$this->loadView('layout/form', $dataForm);
+        $this->loadView('home/listSO', ['data' => $data]);
     }
 
     private function generateCard($datas){
