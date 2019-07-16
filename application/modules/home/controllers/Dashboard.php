@@ -9,12 +9,11 @@ class Dashboard extends MY_Controller
     public function index($referencesId = null)
     {
         $userId = $this->session->userdata('partner_id');
-        $data = $this->dataSO($userId);
         $dataDashboard = [
             ['title' => 'Investasi','count' => 3000000, 'description' => 'Investasi awal','icon' => 'fa fa-briefcase','url' => '#'],
-            ['title' => 'Pembiayaan','count' => 30, 'description' => 'Penjualan kredit yang dibiayai','icon' => 'fa fa-shopping-cart', 'url' => 'home/dashboard/listSO'],
-            ['title' => 'Invoice','count' => '30 (60)', 'description' => 'Invoice yang sudah dibayar','icon' => 'fa fa-file-o', 'url' => ''],
-            ['title' => 'Bagi hasil','count' => '6000000', 'description' => 'Total keuntungan yang dibagi berdasarkan kesepakatan','icon' => 'fa fa-money', 'url' => ''],
+            ['title' => 'Produk Terjual','count' => 30, 'description' => 'Penjualan kredit yang dibiayai','icon' => 'fa fa-shopping-cart', 'url' => 'home/dashboard/listSO'],
+            ['title' => 'Total Pembeli','count' => '25', 'description' => 'Pembeli yang melakukan transaksi','icon' => 'fa fa-users', 'url' => ''],
+            ['title' => 'Proyeksi Nisbah','count' => '6000000', 'description' => 'Total keuntungan yang dibagi berdasarkan kesepakatan','icon' => 'fa fa-money', 'url' => ''],
         ];
         $summaries = $this->generateCard($dataDashboard);
         $this->load->view('home/dashboard', ['summaries' => $summaries]);
@@ -45,13 +44,13 @@ class Dashboard extends MY_Controller
         }
         return $result;
     }
-
+    /** saat ini ditampilkan semua SO tanpa perlu dicari siapa yang membiayai */
     private function dataSO($userId){
         $sql = <<<SQL
-        select so.id,so.name,soi.amount,so.state,so.date_order,so.invoice_status,so.amount_total,(select count(*) from account_invoice ai where ai.origin = so.name ) as jml_cicilan,(select sum(ai.amount_total) from account_invoice ai where ai.state = 'paid' and ai.origin = so.name )  as terbayar
+        select so.id,so.name,so.state,so.date_order,so.invoice_status,so.amount_total,(select count(*) from account_invoice ai where ai.origin = so.name ) as jml_cicilan,(select sum(ai.amount_total) from account_invoice ai where ai.state = 'paid' and ai.origin = so.name )  as terbayar
 from sale_order so
-join ks_sales_order_investor soi on so.id = soi.sales_order_id
-where soi.partner_id = {$userId}
+-- join ks_sales_order_investor soi on so.id = soi.sales_order_id
+-- where soi.partner_id = {$userId}
 SQL;
         return $this->db->query($sql)->result_array();
     }

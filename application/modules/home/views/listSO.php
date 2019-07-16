@@ -4,7 +4,6 @@
         <thead>
             <tr>
             <th>sales order</th>
-            <th>%pembiayaan</th>
             <th>order_date</th>
             <th>jumlah_cicilan</th>
             <th>status</th>
@@ -19,7 +18,6 @@
                         $prosentaseBayar = $d['terbayar'] > 0 ? round(($d['terbayar'] / $d['amount_total'] * 100 ),2)  : 0;
                         echo '<tr>
                         <td onclick="SO.showDetail(this,'.$d['id'].')"><span class="link_span">'.$d['name'].'</span></td>
-                        <td>'.($d['amount']*100).'</td>
                         <td>'.convertElemenTglWaktuIndonesia($d['date_order']).'</td>
                         <td>'.$d['jml_cicilan'].'</td>
                         <td><label class="label label-success"><i class="glyphicon glyphicon-credit-card"></i>  bayar  '.$prosentaseBayar.' %</label>'.'</td>
